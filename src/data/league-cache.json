@@ -1,0 +1,88 @@
+{
+  "teamId": "01JVVHS4ESCV6K0GYXXB0K1NHS",
+  "teamName": "Östers IF",
+  "lastUpdated": "2025-11-21T06:43:39.182Z",
+  "leagues": [
+    {
+      "leagueId": "01JR052JATX2RRWKD0GN4D2WT1",
+      "leagueName": "Allsvenskan",
+      "startDate": "2025-03-30",
+      "endDate": "2025-11-09",
+      "tournamentId": 123864,
+      "seasonYear": "2025",
+      "ostersTeamId": "01JVVHS4ESCV6K0GYXXB0K1NHS"
+    },
+    {
+      "leagueId": "01JY1JCTCDAMHC3637MT54QXEH",
+      "leagueName": "Träningsmatcher Elit, herr",
+      "startDate": "2025-01-01",
+      "endDate": "2025-12-31",
+      "tournamentId": 123645,
+      "seasonYear": "2025",
+      "ostersTeamId": "01JY1JD5NTEMW3Y5PDWFWGJFGE"
+    },
+    {
+      "leagueId": "61",
+      "leagueName": "Superettan",
+      "startDate": "2024-01-19",
+      "endDate": "2024-10-01",
+      "tournamentId": 115526,
+      "seasonYear": "2024",
+      "ostersTeamId": 19
+    },
+    {
+      "leagueId": "39",
+      "leagueName": "Superettan",
+      "startDate": "2023-04-01",
+      "endDate": "2023-11-12",
+      "tournamentId": 102000,
+      "seasonYear": "2023",
+      "ostersTeamId": 19
+    },
+    {
+      "leagueId": "32",
+      "leagueName": "Superettan",
+      "startDate": "2022-04-02",
+      "endDate": "2022-12-05",
+      "tournamentId": 97363,
+      "seasonYear": "2022",
+      "ostersTeamId": 19
+    },
+    {
+      "leagueId": "28",
+      "leagueName": "Superettan",
+      "startDate": "2021-04-11",
+      "endDate": "2021-12-05",
+      "tournamentId": 88308,
+      "seasonYear": "2021",
+      "ostersTeamId": 19
+    },
+    {
+      "leagueId": "26",
+      "leagueName": "Superettan",
+      "startDate": "2020-06-16",
+      "endDate": "2020-12-05",
+      "tournamentId": 82493,
+      "seasonYear": "2020",
+      "ostersTeamId": 19
+    },
+    {
+      "leagueId": "22",
+      "leagueName": "Superettan",
+      "startDate": "2019-03-30",
+      "endDate": "2019-12-31",
+      "tournamentId": 77487,
+      "seasonYear": "2019",
+      "ostersTeamId": 19
+    },
+    {
+      "leagueId": "13",
+      "leagueName": "Superettan",
+      "startDate": "2018-01-01",
+      "endDate": "2018-12-31",
+      "tournamentId": 72153,
+      "seasonYear": "2018",
+      "ostersTeamId": 19
+    }
+  ]
+}
