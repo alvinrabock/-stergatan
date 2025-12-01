@@ -4,6 +4,7 @@
  * Client-side Menu Item Component
  * Handles hover interactions for dropdowns
  * Supports full color configuration including hover and scroll-based reverse states
+ * Uses CSS classes with CSS variables for CMS-driven styling
  */
 
 import { useState, useCallback, useEffect } from 'react'
@@ -104,65 +105,45 @@ export function MenuItemClient({ item, colors, textColor }: MenuItemProps) {
     href = item.url
   }
 
-  const baseStyle: React.CSSProperties = {
-    textDecoration: 'none',
+  // Only use inline styles for dynamic values that change based on hover/scroll state
+  const dynamicStyle: React.CSSProperties = {
     color: isHovered ? currentHoverTextColor : currentTextColor,
     backgroundColor: isHovered ? currentHoverBgColor : 'transparent',
-    padding: '0.5rem 1rem',
-    display: 'block',
-    transition: 'color 0.2s ease, background-color 0.2s ease',
-    cursor: 'pointer',
   }
 
   const linkProps = {
     href,
     target: item.openInNewWindow ? '_blank' : '_self',
     rel: item.openInNewWindow ? 'noopener noreferrer' : undefined,
-    style: baseStyle,
+    style: dynamicStyle,
     className: 'menu-item',
   }
 
   return (
     <li
-      style={{ position: 'relative', zIndex: isOpen ? 1001 : 1 }}
+      className={`menu-item-wrapper ${isOpen ? 'is-open' : ''}`}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
-      className="menu-item-wrapper"
     >
       {hasChildren ? (
         // If has children, render as span (dropdown trigger)
-        <span style={baseStyle} className="menu-item">
-          <span>{item.label}</span>
+        <span style={dynamicStyle} className="menu-item">
+          <span className="menu-item-label">{item.label}</span>
         </span>
       ) : item.type === 'internal' ? (
         <Link {...linkProps}>
-          <span>{item.label}</span>
+          <span className="menu-item-label">{item.label}</span>
         </Link>
       ) : (
         <a {...linkProps}>
-          <span>{item.label}</span>
+          <span className="menu-item-label">{item.label}</span>
         </a>
       )}
 
       {hasChildren && (
         <ul
-          style={{
-            display: isOpen ? 'block' : 'none',
-            position: 'absolute',
-            top: '100%',
-            left: 0,
-            listStyle: 'none',
-            margin: 0,
-            padding: 0,
-            backgroundColor: '#ffffff',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            minWidth: '200px',
-            zIndex: 1000,
-            borderRadius: '0.5rem',
-            overflow: 'hidden',
-          }}
+          className={`submenu ${isOpen ? 'is-open' : ''}`}
           data-menu-label={item.label}
-          data-is-open={isOpen}
         >
           {item.children!.map((child) => (
             <SubmenuItem key={child.id} item={child} />
@@ -175,6 +156,7 @@ export function MenuItemClient({ item, colors, textColor }: MenuItemProps) {
 
 /**
  * Submenu item component with hover state
+ * Uses CSS classes for base styles, inline only for hover state
  */
 function SubmenuItem({ item }: { item: MenuItemType }) {
   const [isHovered, setIsHovered] = useState(false)
@@ -188,13 +170,9 @@ function SubmenuItem({ item }: { item: MenuItemType }) {
     childHref = item.url
   }
 
-  const childStyle: React.CSSProperties = {
-    textDecoration: 'none',
-    color: '#333',
-    padding: '0.75rem 1rem',
-    display: 'block',
-    backgroundColor: isHovered ? '#f3f4f6' : 'transparent',
-    transition: 'background-color 0.2s ease',
+  // Only dynamic hover state as inline style
+  const dynamicStyle: React.CSSProperties = {
+    backgroundColor: isHovered ? 'var(--submenu-hover-bg, #f3f4f6)' : 'transparent',
   }
 
   const childLinkProps = {
@@ -202,12 +180,12 @@ function SubmenuItem({ item }: { item: MenuItemType }) {
     target: item.openInNewWindow ? '_blank' : '_self',
     rel: item.openInNewWindow ? 'noopener noreferrer' : undefined,
     className: 'submenu-item',
-    style: childStyle,
+    style: dynamicStyle,
   }
 
   return (
     <li
-      style={{ borderBottom: '1px solid #f0f0f0' }}
+      className="submenu-item-wrapper"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >

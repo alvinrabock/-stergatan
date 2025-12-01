@@ -206,6 +206,7 @@ export function getBlockStyles(
  * Properly handles shorthand property expansion for responsive overrides
  * Supports linkColor for styling anchor tags within text blocks
  * Supports colorOnScroll and backgroundColorOnScroll for header scroll behavior
+ * Supports gridColumn and gridRow for grid item span properties
  */
 export function generateBlockCSS(
   blockId: string,
@@ -222,8 +223,12 @@ export function generateBlockCSS(
   const colorOnScroll = responsiveStyles.colorOnScroll as { desktop?: string; tablet?: string; mobile?: string } | undefined
   const backgroundColorOnScroll = responsiveStyles.backgroundColorOnScroll as { desktop?: string; tablet?: string; mobile?: string } | undefined
 
+  // Extract grid item properties for special handling (gridColumn, gridRow)
+  const gridColumn = responsiveStyles.gridColumn as { desktop?: string; tablet?: string; mobile?: string } | undefined
+  const gridRow = responsiveStyles.gridRow as { desktop?: string; tablet?: string; mobile?: string } | undefined
+
   // Create a copy of responsiveStyles without special properties for normal processing
-  const { linkColor: _, colorOnScroll: __, backgroundColorOnScroll: ___, ...normalResponsiveStyles } = responsiveStyles
+  const { linkColor: _, colorOnScroll: __, backgroundColorOnScroll: ___, gridColumn: ____, gridRow: _____, ...normalResponsiveStyles } = responsiveStyles
 
   // Add scroll color CSS custom properties for header scroll behavior
   if (colorOnScroll?.desktop) {
@@ -302,9 +307,12 @@ export function generateBlockCSS(
     })
 
     // Reset grid positioning on mobile for single column layouts
+    // Only reset if no explicit gridColumn/gridRow is set for this breakpoint
     const hasGridTemplateColumns = mobileProps.includes('gridTemplateColumns')
-    if (hasGridTemplateColumns) {
+    if (hasGridTemplateColumns && !gridColumn?.mobile) {
       css += `    grid-column: auto !important;\n`
+    }
+    if (hasGridTemplateColumns && !gridRow?.mobile) {
       css += `    grid-row: auto !important;\n`
     }
 
@@ -340,9 +348,12 @@ export function generateBlockCSS(
     })
 
     // Reset grid positioning on tablet for single column layouts
+    // Only reset if no explicit gridColumn/gridRow is set for this breakpoint
     const hasGridTemplateColumns = tabletProps.includes('gridTemplateColumns')
-    if (hasGridTemplateColumns) {
+    if (hasGridTemplateColumns && !gridColumn?.tablet) {
       css += `    grid-column: auto !important;\n`
+    }
+    if (hasGridTemplateColumns && !gridRow?.tablet) {
       css += `    grid-row: auto !important;\n`
     }
 
@@ -368,6 +379,53 @@ export function generateBlockCSS(
     // Mobile link color
     if (mobileLinkColor && mobileLinkColor !== tabletLinkColor) {
       css += `@media (max-width: 767px) { ${className} a { color: ${mobileLinkColor}; } }\n`
+    }
+  }
+
+  // Generate grid item CSS (gridColumn, gridRow) for blocks inside grid containers
+  // These are responsive properties that allow blocks to span multiple columns/rows
+  if (gridColumn || gridRow) {
+    const desktopGridColumn = gridColumn?.desktop
+    const tabletGridColumn = gridColumn?.tablet
+    const mobileGridColumn = gridColumn?.mobile
+    const desktopGridRow = gridRow?.desktop
+    const tabletGridRow = gridRow?.tablet
+    const mobileGridRow = gridRow?.mobile
+
+    // Desktop grid item styles (base)
+    if (desktopGridColumn || desktopGridRow) {
+      css += `${className} {\n`
+      if (desktopGridColumn && desktopGridColumn !== 'auto') {
+        css += `    grid-column: ${desktopGridColumn};\n`
+      }
+      if (desktopGridRow && desktopGridRow !== 'auto') {
+        css += `    grid-row: ${desktopGridRow};\n`
+      }
+      css += `}\n`
+    }
+
+    // Tablet grid item styles
+    if (tabletGridColumn || tabletGridRow) {
+      css += `@media (min-width: 768px) and (max-width: 1023px) { ${className} {\n`
+      if (tabletGridColumn) {
+        css += `    grid-column: ${tabletGridColumn};\n`
+      }
+      if (tabletGridRow) {
+        css += `    grid-row: ${tabletGridRow};\n`
+      }
+      css += `} }\n`
+    }
+
+    // Mobile grid item styles
+    if (mobileGridColumn || mobileGridRow) {
+      css += `@media (max-width: 767px) { ${className} {\n`
+      if (mobileGridColumn) {
+        css += `    grid-column: ${mobileGridColumn};\n`
+      }
+      if (mobileGridRow) {
+        css += `    grid-row: ${mobileGridRow};\n`
+      }
+      css += `} }\n`
     }
   }
 

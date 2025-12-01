@@ -2,6 +2,7 @@
  * Menu Component
  * Server component that fetches and renders navigation menus
  * Supports full color configuration including hover and reverse states
+ * Uses CSS classes instead of inline styles for better CMS integration
  */
 
 import client from '@/lib/frontspace-client'
@@ -15,6 +16,7 @@ interface MenuProps {
   colors?: MenuColors
   textColor?: string // Legacy prop - use colors instead
   className?: string
+  blockId?: string
 }
 
 export async function Menu({
@@ -23,7 +25,8 @@ export async function Menu({
   alignment = 'left',
   colors,
   textColor,
-  className = ''
+  className = '',
+  blockId
 }: MenuProps) {
   // Fetch menu data from Frontspace API
   const menu = await client.getMenu(menuId)
@@ -35,30 +38,36 @@ export async function Menu({
   // Use colors.textColor or fallback to legacy textColor prop
   const effectiveTextColor = colors?.textColor || textColor
 
+  // Generate unique menu ID for CSS scoping
+  const menuClass = blockId ? `menu-${blockId}` : `menu-${menuId}`
+
   return (
-    <nav
-      className={`menu ${className}`}
-      style={{ color: effectiveTextColor || 'inherit', position: 'relative' }}
-    >
-      <ul
-        style={{
-          display: 'flex',
-          flexDirection: orientation === 'vertical' ? 'column' : 'row',
-          justifyContent:
-            alignment === 'center' ? 'center' :
-            alignment === 'right' ? 'flex-end' :
-            'flex-start',
-          listStyle: 'none',
-          margin: 0,
-          padding: 0,
-          gap: '1rem',
-          position: 'relative',
-        }}
+    <>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .${menuClass} {
+          position: relative;
+        }
+        .${menuClass} .menu-list {
+          display: flex;
+          flex-direction: ${orientation === 'vertical' ? 'column' : 'row'};
+          justify-content: ${alignment === 'center' ? 'center' : alignment === 'right' ? 'flex-end' : 'flex-start'};
+          list-style: none;
+          margin: 0;
+          padding: var(--padding-top, 0) var(--padding-right, 0) var(--padding-bottom, 0) var(--padding-left, 0);
+          gap: var(--menu-gap, 1rem);
+          position: relative;
+        }
+      `}} />
+      <nav
+        className={`menu ${menuClass} ${className}`}
+        style={{ color: effectiveTextColor || 'inherit' }}
       >
-        {menu.items.map((item) => (
-          <MenuItemClient key={item.id} item={item} colors={colors} textColor={effectiveTextColor} />
-        ))}
-      </ul>
-    </nav>
+        <ul className="menu-list">
+          {menu.items.map((item) => (
+            <MenuItemClient key={item.id} item={item} colors={colors} textColor={effectiveTextColor} />
+          ))}
+        </ul>
+      </nav>
+    </>
   )
 }

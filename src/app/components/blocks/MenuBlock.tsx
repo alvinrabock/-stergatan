@@ -4,6 +4,7 @@
  * Renders navigation menu using the Menu component
  * Supports hamburger/mobile menu with responsive breakpoints
  * Fetches menu data from Frontspace CMS
+ * Uses CSS classes and CSS variables for CMS-driven styling
  */
 
 import React from 'react'
@@ -24,6 +25,59 @@ export interface Block {
 interface MenuBlockProps {
   block: Block
   blockId: string
+}
+
+/**
+ * Generate base CSS for menu items
+ * These are the static styles that don't need to be inline
+ */
+function generateMenuBaseCSS(blockId: string): string {
+  return `
+    .block-${blockId} .menu-item-wrapper {
+      position: relative;
+      z-index: 1;
+    }
+    .block-${blockId} .menu-item-wrapper.is-open {
+      z-index: 1001;
+    }
+    .block-${blockId} .menu-item {
+      text-decoration: none;
+      display: block;
+      transition: color 0.2s ease, background-color 0.2s ease;
+      cursor: pointer;
+    }
+    .block-${blockId} .submenu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      background-color: var(--submenu-bg, #ffffff);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      min-width: 200px;
+      z-index: 1000;
+      border-radius: var(--submenu-border-radius, 0.5rem);
+      overflow: hidden;
+    }
+    .block-${blockId} .submenu.is-open {
+      display: block;
+    }
+    .block-${blockId} .submenu-item-wrapper {
+      border-bottom: 1px solid var(--submenu-border-color, #f0f0f0);
+    }
+    .block-${blockId} .submenu-item-wrapper:last-child {
+      border-bottom: none;
+    }
+    .block-${blockId} .submenu-item {
+      text-decoration: none;
+      color: var(--submenu-text-color, #333);
+      padding: var(--submenu-item-padding, 0.75rem 1rem);
+      display: block;
+      transition: background-color 0.2s ease;
+    }
+  `
 }
 
 export default async function MenuBlock({ block, blockId }: MenuBlockProps) {
@@ -76,14 +130,16 @@ export default async function MenuBlock({ block, blockId }: MenuBlockProps) {
     ? generateHamburgerBreakpointCSS(blockId, hamburgerSettings.breakpoint)
     : ''
 
+  // Generate base menu CSS
+  const menuBaseCSS = generateMenuBaseCSS(blockId)
+
   return (
     <>
-      {breakpointCSS && <style dangerouslySetInnerHTML={{ __html: breakpointCSS }} />}
+      <style dangerouslySetInnerHTML={{ __html: menuBaseCSS + breakpointCSS }} />
 
       <div
         className={`menu-block block-${blockId}`}
         data-block-id={blockId}
-        style={{ position: 'relative', overflow: 'visible' }}
       >
         {/* Regular Menu (hidden on mobile/tablet based on hamburger breakpoint) */}
         <div className={hamburgerSettings?.enabled ? `regular-menu-${blockId}` : ''}>
@@ -93,6 +149,7 @@ export default async function MenuBlock({ block, blockId }: MenuBlockProps) {
             alignment={alignment}
             colors={colors}
             className={`block-${blockId}`}
+            blockId={blockId}
           />
         </div>
 
