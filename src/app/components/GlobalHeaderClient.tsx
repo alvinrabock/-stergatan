@@ -22,7 +22,7 @@ export function GlobalHeaderClient({ settings, children, reverseHeaderColors: in
 
   // Default to transparent and sticky for overlay behavior
   const isTransparent = settings?.background === 'transparent' || !settings?.background;
-  const isSticky = settings?.position === 'sticky' || !settings?.position;
+  const _isSticky = settings?.position === 'sticky' || !settings?.position;
   const isFixed = settings?.position === 'fixed';
 
   // Listen for page header settings changes (from PageHeaderSettings component)

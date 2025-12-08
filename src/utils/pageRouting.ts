@@ -10,6 +10,7 @@ interface Page {
   parent_id?: string | null;
   parentId?: string | null;
   content: any;
+  reverse_header_colors?: boolean;
 }
 
 export interface PageWithPath extends Page {

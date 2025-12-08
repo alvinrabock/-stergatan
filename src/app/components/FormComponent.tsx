@@ -29,7 +29,7 @@ interface FormComponentProps {
 
 export function FormComponent({
   form,
-  blockId,
+  blockId: _blockId,
   className = '',
   submitButtonText = 'Skicka',
   confirmationMessage = 'Ditt formulär har skickats. Vi återkommer så snart som möjligt.',

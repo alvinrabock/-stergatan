@@ -53,7 +53,7 @@ interface HamburgerMenuProps {
   blockId: string
 }
 
-export function HamburgerMenu({ settings, menuItems, colors, blockId }: HamburgerMenuProps) {
+export function HamburgerMenu({ settings, menuItems, colors, blockId: _blockId }: HamburgerMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set())
