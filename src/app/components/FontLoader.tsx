@@ -47,6 +47,18 @@ function generateFontVariables(fonts: Font[]): string {
   fonts.forEach((font, index) => {
     variables.push(`--font-${index + 1}: '${font.fontFamily}', sans-serif;`);
 
+    // Check for defaultFor structure (new backend format)
+    if (font.defaultFor?.headings) {
+      variables.push(`--font-headings: '${font.fontFamily}', sans-serif;`);
+    }
+    if (font.defaultFor?.body) {
+      variables.push(`--font-body: '${font.fontFamily}', sans-serif;`);
+    }
+    if (font.defaultFor?.buttons) {
+      variables.push(`--font-buttons: '${font.fontFamily}', sans-serif;`);
+    }
+
+    // Legacy support for isDefault string format
     if (font.isDefault === 'headings' || font.isDefault === true) {
       variables.push(`--font-headings: '${font.fontFamily}', sans-serif;`);
     }
@@ -58,7 +70,9 @@ function generateFontVariables(fonts: Font[]): string {
     }
   });
 
-  return `:root {\n  ${variables.join('\n  ')}\n}`;
+  // Remove duplicates
+  const uniqueVariables = [...new Set(variables)];
+  return `:root {\n  ${uniqueVariables.join('\n  ')}\n}`;
 }
 
 /**

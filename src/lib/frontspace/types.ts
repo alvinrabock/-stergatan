@@ -283,13 +283,20 @@ export interface FontVariant {
   format: string;
 }
 
+export interface FontDefaultFor {
+  headings?: { weight?: number; style?: 'normal' | 'italic' };
+  body?: { weight?: number; style?: 'normal' | 'italic' };
+  buttons?: { weight?: number; style?: 'normal' | 'italic' };
+}
+
 export interface Font {
   id: string;
   name: string;
   type: 'google' | 'custom';
   fontFamily: string;
   variants?: FontVariant[];
-  isDefault?: 'headings' | 'body' | 'buttons' | boolean;
+  defaultFor?: FontDefaultFor;
+  isDefault?: 'headings' | 'body' | 'buttons' | boolean; // Legacy support
 }
 
 export interface ResponsiveValue {
