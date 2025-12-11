@@ -92,15 +92,25 @@ export default async function MenuBlock({ block, blockId }: MenuBlockProps) {
     return null
   }
 
-  // Fetch menu data
-  const menu = await client.getMenu(content.selectedMenuId)
+  // Fetch menu data - use mobileMenuId for hamburger if specified, otherwise use selectedMenuId
+  const mobileMenuId = hamburgerSettings?.mobileMenuId
+  const shouldFetchMobileMenu = hamburgerSettings?.enabled && mobileMenuId && mobileMenuId !== content.selectedMenuId
+
+  // Fetch both menus in parallel if needed
+  const [menu, mobileMenu] = await Promise.all([
+    client.getMenu(content.selectedMenuId),
+    shouldFetchMobileMenu ? client.getMenu(mobileMenuId) : Promise.resolve(null)
+  ])
 
   if (!menu || !menu.items || menu.items.length === 0) {
     return null
   }
 
+  // Use mobile menu for hamburger if available, otherwise fall back to main menu
+  const hamburgerMenuSource = mobileMenu || menu
+
   // Transform menu items to HamburgerMenuItem format
-  const menuItems: HamburgerMenuItem[] = menu.items.map((item: any) => ({
+  const menuItems: HamburgerMenuItem[] = hamburgerMenuSource.items.map((item: any) => ({
     id: item.id,
     label: item.label,
     type: item.type || 'internal',
