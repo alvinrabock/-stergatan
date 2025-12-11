@@ -480,3 +480,50 @@ export function extractNumericValue(value: string | undefined, defaultValue: num
   const match = value.match(/^(\d+)/)
   return match ? parseInt(match[1]) : defaultValue
 }
+
+/**
+ * Block interface for generateAdvancedBlockCSS
+ */
+export interface Block {
+  id: string
+  type: string
+  content: any
+  styles?: Record<string, any>
+  responsiveStyles?: Record<string, Record<string, any>>
+}
+
+export interface GenerateAdvancedBlockCSSOptions {
+  includeGlobal?: boolean
+  prefix?: string
+}
+
+export interface GenerateAdvancedBlockCSSResult {
+  css: string
+  className: string
+}
+
+/**
+ * Generate advanced CSS for a block with responsive styles
+ * Returns both the CSS string and the class name to apply
+ * Note: className always uses 'block-{id}' format to match generateBlockCSS selector
+ */
+export function generateAdvancedBlockCSS(
+  block: Block,
+  _options: GenerateAdvancedBlockCSSOptions = {}
+): GenerateAdvancedBlockCSSResult {
+  const blockId = block.id
+  // Always use 'block-' prefix to match the CSS selector in generateBlockCSS
+  const className = `block-${blockId}`
+
+  // Generate CSS using existing generateBlockCSS
+  const css = generateBlockCSS(
+    blockId,
+    block.styles || {},
+    (block.responsiveStyles || {}) as ResponsiveStyles
+  )
+
+  return {
+    css,
+    className
+  }
+}

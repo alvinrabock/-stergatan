@@ -1,21 +1,13 @@
 /**
- * Button Block Component
+ * Button Block Component for Headless Frontend
  *
- * Renders clickable buttons with links
+ * Renders clickable buttons with links and proper styles
  * Supports all link types: internal, external, email, phone, anchor
  */
 
 import React from 'react'
 import Link from 'next/link'
-import { isInternalUrl, resolveInternalLinkUrl } from '@/lib/block-utils'
-
-export interface Block {
-  id: string
-  type: string
-  content: any
-  styles?: Record<string, any>
-  responsiveStyles?: Record<string, Record<string, any>>
-}
+import { isInternalUrl, resolveInternalLinkUrl, generateAdvancedBlockCSS, Block } from '@/lib/block-utils'
 
 interface ButtonBlockProps {
   block: Block
@@ -24,6 +16,12 @@ interface ButtonBlockProps {
 
 export default function ButtonBlock({ block, blockId }: ButtonBlockProps) {
   const { text, link } = block.content
+
+  // Generate responsive CSS (same as public-block-renderer.tsx)
+  const { css: responsiveCSS, className: blockClassName } = generateAdvancedBlockCSS(block, {
+    includeGlobal: false,
+    prefix: 'button-block'
+  })
 
   // Resolve link URL based on type
   const resolveLink = () => {
@@ -39,7 +37,7 @@ export default function ButtonBlock({ block, blockId }: ButtonBlockProps) {
       case 'phone':
         return link.url ? `tel:${link.url}` : null
       case 'anchor':
-        return link.url || null // Already has # prefix
+        return link.url || null
       default:
         return link.url || null
     }
@@ -47,50 +45,66 @@ export default function ButtonBlock({ block, blockId }: ButtonBlockProps) {
 
   const href = resolveLink()
 
+  // Inject the responsive CSS
+  const styleElement = responsiveCSS ? (
+    <style dangerouslySetInnerHTML={{ __html: responsiveCSS }} />
+  ) : null
+
   // No link - render as button
   if (!href) {
     return (
-      <button
-        className={`button-block block-${blockId}`}
-        data-block-id={blockId}
-        type="button"
-      >
-        {text || 'Button'}
-      </button>
+      <>
+        {styleElement}
+        <button
+          className={blockClassName}
+          data-block-id={blockId}
+          type="button"
+        >
+          {text || 'Button'}
+        </button>
+      </>
     )
   }
 
   // Internal link - use Next.js Link
   if (link.type === 'internal' && isInternalUrl(href)) {
     const linkProps = link.openInNewWindow
-      ? { target: '_blank', rel: 'noopener noreferrer' }
+      ? { target: '_blank' as const, rel: 'noopener noreferrer' }
       : {}
 
     return (
-      <Link
-        href={href}
-        {...linkProps}
-        className={`button-block block-${blockId}`}
-        data-block-id={blockId}
-      >
-        {text || 'Button'}
-      </Link>
+      <>
+        {styleElement}
+        <Link
+          href={href}
+          {...linkProps}
+          style={{ textDecoration: 'none', display: 'inline-block' }}
+        >
+          <button className={blockClassName} data-block-id={blockId}>
+            {text || 'Button'}
+          </button>
+        </Link>
+      </>
     )
   }
 
   // External/email/phone/anchor - use regular anchor tag
   const linkProps = link.openInNewWindow
-    ? { target: '_blank', rel: 'noopener noreferrer' }
+    ? { target: '_blank' as const, rel: 'noopener noreferrer' }
     : {}
 
   return (
-    <a
-      href={href}
-      {...linkProps}
-      className={`button-block block-${blockId}`}
-      data-block-id={blockId}
-    >
-      {text || 'Button'}
-    </a>
+    <>
+      {styleElement}
+      <a
+        href={href}
+        {...linkProps}
+        style={{ textDecoration: 'none', display: 'inline-block' }}
+      >
+        <button className={blockClassName} data-block-id={blockId}>
+          {text || 'Button'}
+        </button>
+      </a>
+    </>
   )
 }
