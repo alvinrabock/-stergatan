@@ -1,11 +1,13 @@
 // app/layout.tsx or app/layout.ts
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import "./globals.css";
 import { GlobalHeader } from "@/app/components/GlobalHeader";
 import { Footer } from "@/app/components/Footer";
 import { FontLoader } from "@/app/components/FontLoader";
 import { UIProvider } from "@/providers/ui-context";
 import { fetchFooter, fetchHeader, fetchThemeSettings } from "@/lib/frontspace/client";
+import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 
 export const metadata: Metadata = {
   title: "Östers IF",
@@ -38,6 +40,9 @@ export default async function RootLayout({
           </main>
           {footer && <Footer footer={footer} />}
         </UIProvider>
+        <Suspense fallback={null}>
+          <AnalyticsTracker storeId={process.env.FRONTSPACE_STORE_ID || ''} />
+        </Suspense>
       </body>
     </html>
   );
