@@ -74,8 +74,8 @@ async function frontspaceGraphQLFetch<T>(
         variables,
       }),
       next: {
-        revalidate: 60, // Cache for 60 seconds
-        tags: tags || ['frontspace'], // Add cache tags for on-demand revalidation
+        revalidate: false, // Only revalidate via webhook
+        tags: tags || ['frontspace'], // Cache tags for on-demand revalidation
       },
     });
 
