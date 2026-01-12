@@ -28,23 +28,30 @@ export function AnalyticsTracker({ storeId }: AnalyticsTrackerProps) {
     startTimeRef.current = Date.now()
     urlRef.current = url
 
-    // Track page view
-    fetch('/api/analytics', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        storeId,
-        type: 'event',
-        payload: {
-          url,
-          hostname: window.location.hostname,
-          referrer: document.referrer,
-          language: navigator.language,
-          ua: navigator.userAgent,
-          screen: `${screen.width}x${screen.height}`,
-        },
-      }),
-    }).catch(() => {})
+    // Track page view - use sendBeacon for non-blocking, low priority
+    const pageViewPayload = JSON.stringify({
+      storeId,
+      type: 'event',
+      payload: {
+        url,
+        hostname: window.location.hostname,
+        referrer: document.referrer,
+        language: navigator.language,
+        ua: navigator.userAgent,
+        screen: `${screen.width}x${screen.height}`,
+      },
+    })
+
+    if (navigator.sendBeacon) {
+      navigator.sendBeacon('/api/analytics', pageViewPayload)
+    } else {
+      fetch('/api/analytics', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: pageViewPayload,
+        keepalive: true,
+      }).catch(() => {})
+    }
 
     // Track duration on page leave
     const trackDuration = () => {
