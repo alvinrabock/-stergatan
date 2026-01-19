@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Menu, ArrowRight, X } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import {
   Sheet,
@@ -18,14 +18,12 @@ import {
   AccordionTrigger,
   AccordionContent,
 } from '../ui/accordion';
-import { Media } from '../Media/index';
 import Facebook from '../Icons/Facebook';
 import Instagram from '../Icons/Instagram';
 import TikTok from '../Icons/TikTok';
 import YoutubeIcon from '../Icons/YoutubeIcon';
 import XIcon from '../Icons/XIcon';
 import { Button } from '../ui/Button';
-import type { Media as MediaType } from '@/types';
 import { SearchDialog } from './SearchDialog';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
@@ -84,13 +82,16 @@ export function MobileNav({ menuItems, socialMedia }: MobileNavProps) {
 
   const renderSubMenu = (
     subMenu: FrontspaceMenuItem[] | null | undefined,
-    isTopLevel = true
+    depth = 0
   ): React.ReactNode => {
     if (!subMenu) return null;
+
+    const isTopLevel = depth === 0;
+
     return (
       <ul className={isTopLevel
-        ? 'flex flex-col gap-3 sm:gap-4 p-3 sm:p-4'
-        : 'ml-3 sm:ml-4 pl-2 sm:pl-3 mt-2 space-y-2'}
+        ? 'flex flex-col gap-2 pt-3 pb-1'
+        : 'flex flex-col gap-1 pt-2 pb-1 pl-4 border-l border-white/20'}
       >
         {subMenu?.map((item) => {
           const hasSubMenu = item.children && item.children.length > 0;
@@ -98,36 +99,14 @@ export function MobileNav({ menuItems, socialMedia }: MobileNavProps) {
 
           return (
             <li key={item.id || item.title} className="relative w-full">
-              {/* Check if item has image - if so, render as box layout */}
-              {false ? ( // TODO: Add image support if needed
-                <div className='relative grow rounded-lg overflow-hidden group h-48 sm:h-60 w-full'>
-                  <Media
-                    resource={item.image as string | number | MediaType}
-                    imgClassName='absolute inset-0 object-cover w-full h-full'
-                    fill
-                    size='30vw'
-                  />
-                  <SheetClose asChild>
-                    <Link
-                      href={href}
-                      {...getLinkProps(item)}
-                      className='absolute inset-0 flex items-end p-3 sm:p-4 transition bg-gradient-to-t from-custom_dark_red/80 via-custom_dark_red/40 to-transparent'
-                    >
-                      <div className='flex items-center gap-2 text-white text-lg sm:text-xl md:text-2xl font-semibold'>
-                        {item.title}
-                        <ArrowRight className='w-5 h-5' />
-                      </div>
-                    </Link>
-                  </SheetClose>
-                </div>
-              ) : hasSubMenu ? (
-                <Accordion type="single" collapsible className="space-y-3 text-white p-0">
-                  <AccordionItem value={item.title}>
-                    <AccordionTrigger className="text-left font-semibold text-sm sm:text-base p-0">
+              {hasSubMenu ? (
+                <Accordion type="single" collapsible className="w-full">
+                  <AccordionItem value={item.title} className="border-none">
+                    <AccordionTrigger className={`text-left p-0 py-1.5 hover:no-underline uppercase ${isTopLevel ? 'text-base' : 'text-sm'} text-white/90 hover:text-white`}>
                       {item.title}
                     </AccordionTrigger>
-                    <AccordionContent>
-                      {renderSubMenu(item.children, false)}
+                    <AccordionContent className="pb-0">
+                      {renderSubMenu(item.children, depth + 1)}
                     </AccordionContent>
                   </AccordionItem>
                 </Accordion>
@@ -136,7 +115,7 @@ export function MobileNav({ menuItems, socialMedia }: MobileNavProps) {
                   <Link
                     href={href}
                     {...getLinkProps(item)}
-                    className={`block ${isTopLevel ? 'text-sm sm:text-base' : 'font-semibold text-xs sm:text-sm'} text-white`}
+                    className={`block py-1.5 uppercase ${isTopLevel ? 'text-base' : 'text-sm'} text-white/90 hover:text-white transition-colors`}
                   >
                     {item.title}
                   </Link>
@@ -196,11 +175,11 @@ export function MobileNav({ menuItems, socialMedia }: MobileNavProps) {
                       value={menuItem.title}
                       className={`border-none ${spacingClass}`}
                     >
-                      <AccordionTrigger className={`${paddingClass} oswald-font uppercase text-white font-bold ${textSizeClass} ${borderClass} flex justify-between items-center group`}>
+                      <AccordionTrigger className={`${paddingClass} uppercase text-white font-bold ${textSizeClass} ${borderClass} flex justify-between items-center group`}>
                         {menuItem.title}
                       </AccordionTrigger>
                       <AccordionContent>
-                        {renderSubMenu(menuItem.children, true)}
+                        {renderSubMenu(menuItem.children, 0)}
                       </AccordionContent>
                     </AccordionItem>
                   );
@@ -214,7 +193,7 @@ export function MobileNav({ menuItems, socialMedia }: MobileNavProps) {
                       <Link
                         href={href}
                         {...getLinkProps(menuItem)}
-                        className={`block w-full text-left ${textSizeClass} text-white ${borderClass} ${paddingClass} oswald-font font-bold uppercase`}
+                        className={`block w-full text-left ${textSizeClass} text-white ${borderClass} ${paddingClass} font-bold uppercase`}
                       >
                         {menuItem.title}
                       </Link>

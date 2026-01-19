@@ -125,7 +125,7 @@ export function GlobalHeaderClient({ settings, children, reverseHeaderColors: in
   // For solid backgrounds, use sticky so it stays in document flow
   const headerStyle: React.CSSProperties = {
     width: '100%',
-    overflowX: 'hidden',
+    overflow: 'visible',
     backgroundColor: 'transparent',
     transition: 'background-color 0.3s ease',
     position: 'fixed',
