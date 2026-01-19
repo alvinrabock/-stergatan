@@ -78,7 +78,7 @@ export default function ButtonBlock({ block, blockId }: ButtonBlockProps) {
         <Link
           href={href}
           {...linkProps}
-          style={{ textDecoration: 'none', display: 'inline-block' }}
+          style={{ display: 'contents' }}
         >
           <button className={blockClassName} data-block-id={blockId}>
             {text || 'Button'}
@@ -99,7 +99,7 @@ export default function ButtonBlock({ block, blockId }: ButtonBlockProps) {
       <a
         href={href}
         {...linkProps}
-        style={{ textDecoration: 'none', display: 'inline-block' }}
+        style={{ display: 'contents' }}
       >
         <button className={blockClassName} data-block-id={blockId}>
           {text || 'Button'}
