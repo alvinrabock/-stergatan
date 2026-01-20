@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const cmsApiUrl = process.env.CMS_API_URL || 'https://app.frontspace.se'
+    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://app.frontspace.se'
 
     // Get client IP for location detection
     const forwardedFor = request.headers.get('x-forwarded-for')
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       ip: clientIp,
     }
 
-    const response = await fetch(`${cmsApiUrl}/api/analytics`, {
+    const response = await fetch(`${backendUrl}/api/analytics`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
