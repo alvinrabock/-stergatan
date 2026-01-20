@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server'
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || 'https://app.frontspace.se'
+    const analyticsEndpoint = process.env.FRONTSPACE_ANALYTICS_ENDPOINT
 
     // Get client IP for location detection
     const forwardedFor = request.headers.get('x-forwarded-for')
@@ -16,7 +16,11 @@ export async function POST(request: NextRequest) {
       ip: clientIp,
     }
 
-    const response = await fetch(`${backendUrl}/api/analytics`, {
+    if (!analyticsEndpoint) {
+      return NextResponse.json({ success: false, error: 'Analytics not configured' }, { status: 500 })
+    }
+
+    const response = await fetch(analyticsEndpoint, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

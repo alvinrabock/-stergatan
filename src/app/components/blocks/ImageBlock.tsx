@@ -24,9 +24,6 @@ interface ImageBlockProps {
 export default function ImageBlock({ block, blockId }: ImageBlockProps) {
   const { src, alt, link, logoOnScroll } = block.content
 
-  // Debug: Log image block content
-  console.log('ImageBlock content:', JSON.stringify(block.content, null, 2))
-
   if (!src) return null
 
   // The CSS styles are applied via the block-${blockId} class
