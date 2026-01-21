@@ -51,15 +51,23 @@ function generateMenuBaseCSS(blockId: string): string {
       position: absolute;
       top: 100%;
       left: 0;
+      right: auto;
       list-style: none;
       margin: 0;
       padding: 0;
       background-color: var(--submenu-bg, #ffffff);
       box-shadow: 0 4px 12px rgba(0,0,0,0.15);
       min-width: 200px;
+      max-width: calc(100vw - 2rem);
       z-index: 1000;
       border-radius: var(--submenu-border-radius, 0.5rem);
       overflow: hidden;
+    }
+    /* Prevent submenu from going off right edge for last items */
+    .block-${blockId} .menu-item-wrapper:last-child .submenu,
+    .block-${blockId} .menu-item-wrapper:nth-last-child(2) .submenu {
+      left: auto;
+      right: 0;
     }
     .block-${blockId} .submenu.is-open {
       display: block;
