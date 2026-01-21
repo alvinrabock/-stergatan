@@ -283,8 +283,19 @@ export function generateBlockCSS(
     const value = normalResponsiveStyles[prop]?.mobile
     return value !== undefined && value !== null && value !== ''
   })
-  if (mobileProps.length > 0) {
+
+  // Check if width needs a mobile fallback (has desktop width but no mobile width)
+  const hasDesktopWidth = normalResponsiveStyles.width?.desktop || finalExpandedBaseStyles.width
+  const hasMobileWidth = normalResponsiveStyles.width?.mobile
+  const needsMobileWidthFallback = hasDesktopWidth && !hasMobileWidth
+
+  if (mobileProps.length > 0 || needsMobileWidthFallback) {
     css += `@media (max-width: 767px) { ${className} {\n`
+
+    // Add width: 100% fallback if no mobile width is set
+    if (needsMobileWidthFallback) {
+      css += `    width: 100% !important;\n`
+    }
 
     // Expand shorthand properties in mobile responsive styles
     const mobileStyles: Record<string, any> = {}

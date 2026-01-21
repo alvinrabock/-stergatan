@@ -163,33 +163,31 @@
   }
 }
 
+/* Headings use CMS font-headings variable */
 h1,
 h2,
 h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-oswald), sans-serif;
-  text-transform: uppercase;
+  font-family: var(--font-headings), sans-serif;
 }
 
-/* Apply Roboto to paragraphs and body text */
+/* Body text uses CMS font-body variable */
 body,
 p,
 span,
 div,
 li,
-a {
-  font-family: var(--font-poppins), sans-serif;
+a,
+strong,
+b {
+  font-family: var(--font-body), sans-serif;
 }
 
-/* Ensure a fallback sans-serif font */
-* {
-  font-family: 'Poppins', sans-serif;
-}
-
-.oswald-font {
-  font-family: var(--font-oswald), sans-serif;
+/* Buttons use CMS font-buttons variable */
+button {
+  font-family: var(--font-buttons, var(--font-body)), sans-serif;
 }
 
 /* Add this to your global CSS or in your Tailwind configuration */
