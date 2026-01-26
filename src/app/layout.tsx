@@ -32,7 +32,7 @@ export default async function RootLayout({
         <meta name="robots" content="index" />
         <FontLoader themeSettings={themeSettings} />
       </head>
-      <body className="antialiased bg-custom_dark_dark_red">
+      <body className="antialiased bg-white">
         <UIProvider>
           {header && <GlobalHeader header={header} />}
           <main>
