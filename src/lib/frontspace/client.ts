@@ -549,14 +549,17 @@ export async function fetchPostBySlug<T>(
 
 /**
  * Fetch huvudmeny (main menu)
+ * Parallelized: fetches menu and pages concurrently for better performance
  */
 export async function fetchHuvudmeny() {
-  const menu = await fetchMenuBySlug('huvudmeny');
+  // Fetch menu and all pages in parallel (both are needed for path enrichment)
+  const [menu, allPages] = await Promise.all([
+    fetchMenuBySlug('huvudmeny'),
+    fetchAllPages()
+  ]);
 
   if (!menu || !menu.items) return menu;
 
-  // Fetch all pages to build the path map
-  const allPages = await fetchAllPages();
   const pagesMap = new Map(allPages.map(page => [page.id, page]));
 
   // Enrich menu items with full nested paths
