@@ -7,7 +7,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const STORE_ID = process.env.FRONTSPACE_STORE_ID!
-const API_URL = 'https://api.frontspace.se'
+const API_URL = process.env.NEXT_PUBLIC_BACKEND_URL!
 
 // In-memory cache for redirect lookups (5 min TTL)
 const redirectCache = new Map<string, { redirect: RedirectMatch | null; expires: number }>()
