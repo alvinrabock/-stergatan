@@ -168,7 +168,13 @@ export function FontLoader({ themeSettings }: FontLoaderProps) {
 
   return (
     <>
-      {/* Google Fonts */}
+      {/* Google Fonts preconnect + stylesheets */}
+      {googleFonts.length > 0 && (
+        <>
+          <link rel="preconnect" href="https://fonts.googleapis.com" />
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        </>
+      )}
       {googleFonts.map((font) => (
         <link key={font.id} rel="stylesheet" href={generateGoogleFontLink(font)} />
       ))}
